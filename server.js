@@ -3,7 +3,7 @@ const express = require("express");
 const app = express();
 
 app.use(express.json());
-
+app.use("/app", express.static("public"));
 const PORT = process.env.PORT || 10000;
 
 const VERIFY_TOKEN = process.env.VERIFY_TOKEN || "teste-whatsapp";
@@ -13,7 +13,55 @@ const PHONE_NUMBER_ID = process.env.PHONE_NUMBER_ID;
 app.get("/", (req, res) => {
   res.send("WhatsApp Webhook funcionando!");
 });
+app.post("/api/send-test", async (req, res) => {
+  const telefone = String(req.body.to || "").replace(/\D/g, "");
 
+  if (!telefone) {
+    return res.status(400).json({
+      error: "Informe o número do destinatário."
+    });
+  }
+
+  try {
+    const resposta = await fetch(
+      https://graph.facebook.com/v25.0/${PHONE_NUMBER_ID}/messages,
+      {
+        method: "POST",
+        headers: {
+          "Authorization": Bearer ${WHATSAPP_ACCESS_TOKEN},
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          messaging_product: "whatsapp",
+          to: telefone,
+          type: "template",
+          template: {
+            name: "hello_world",
+            language: {
+              code: "en_US"
+            }
+          }
+        })
+      }
+    );
+
+    const dados = await resposta.json();
+
+    if (!resposta.ok) {
+      return res.status(400).json(dados);
+    }
+
+    return res.json({
+      ok: true,
+      data: dados
+    });
+
+  } catch (erro) {
+    return res.status(500).json({
+      error: erro.message
+    });
+  }
+});
 app.get("/webhook", (req, res) => {
   const mode = req.query["hub.mode"];
   const token = req.query["hub.verify_token"];
