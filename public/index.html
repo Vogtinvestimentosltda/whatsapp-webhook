@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>VOGT WhatsApp</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: 50px auto;
+      padding: 25px;
+    }
+
+    input, button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      box-sizing: border-box;
+    }
+
+    button {
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    #resultado {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>VOGT WhatsApp</h1>
+
+  <p>Envio de mensagem de teste pela WhatsApp Cloud API.</p>
+
+  <label>Número do destinatário</label>
+
+  <input
+    id="telefone"
+    placeholder="5599999999999"
+  >
+
+  <button onclick="enviar()">
+    Enviar mensagem de teste
+  </button>
+
+  <div id="resultado"></div>
+
+  <script>
+    async function enviar() {
+
+      const telefone =
+        document.getElementById("telefone").value;
+
+      const resultado =
+        document.getElementById("resultado");
+
+      resultado.innerHTML = "Enviando...";
+
+      try {
+
+        const resposta = await fetch("/api/send-test", {
+          method: "POST",
+
+          headers: {
+            "Content-Type": "application/json"
+          },
+
+          body: JSON.stringify({
+            to: telefone
+          })
+        });
+
+        const dados = await resposta.json();
+
+        if (resposta.ok) {
+          resultado.innerHTML =
+            "✅ Mensagem enviada com sucesso.";
+        } else {
+          resultado.innerHTML =
+            "❌ Erro: " + JSON.stringify(dados);
+        }
+
+      } catch (erro) {
+
+        resultado.innerHTML =
+          "❌ Erro de conexão: " + erro.message;
+
+      }
+    }
+  </script>
+
+</body>
+</html>
