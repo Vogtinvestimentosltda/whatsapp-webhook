@@ -4,6 +4,7 @@ const app = express();
 
 app.use(express.json());
 app.use("/app", express.static("public"));
+
 const PORT = process.env.PORT || 10000;
 
 const VERIFY_TOKEN = process.env.VERIFY_TOKEN || "teste-whatsapp";
@@ -13,6 +14,7 @@ const PHONE_NUMBER_ID = process.env.PHONE_NUMBER_ID;
 app.get("/", (req, res) => {
   res.send("WhatsApp Webhook funcionando!");
 });
+
 app.post("/api/send-test", async (req, res) => {
   const telefone = String(req.body.to || "").replace(/\D/g, "");
 
@@ -24,11 +26,11 @@ app.post("/api/send-test", async (req, res) => {
 
   try {
     const resposta = await fetch(
-      https://graph.facebook.com/v25.0/${PHONE_NUMBER_ID}/messages,
+      `https://graph.facebook.com/v25.0/${PHONE_NUMBER_ID}/messages`,
       {
         method: "POST",
         headers: {
-          "Authorization": Bearer ${WHATSAPP_ACCESS_TOKEN},
+          "Authorization": `Bearer ${WHATSAPP_ACCESS_TOKEN}`,
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
@@ -62,6 +64,7 @@ app.post("/api/send-test", async (req, res) => {
     });
   }
 });
+
 app.get("/webhook", (req, res) => {
   const mode = req.query["hub.mode"];
   const token = req.query["hub.verify_token"];
