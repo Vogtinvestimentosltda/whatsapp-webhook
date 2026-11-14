@@ -1,98 +1,56 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>VOGT WhatsApp</title>
-
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      max-width: 600px;
-      margin: 50px auto;
-      padding: 25px;
-    }
-
-    input, button {
-      width: 100%;
-      padding: 12px;
-      margin-top: 10px;
-      box-sizing: border-box;
-    }
-
-    button {
-      cursor: pointer;
-      font-weight: bold;
-    }
-
-    #resultado {
-      margin-top: 20px;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vogt Investimentos - WhatsApp</title>
 </head>
-
 <body>
-
-  <h1>VOGT WhatsApp</h1>
-
-  <p>Envio de mensagem de teste pela WhatsApp Cloud API.</p>
-
-  <label>Número do destinatário</label>
-
-  <input
-    id="telefone"
-    placeholder="5599999999999"
-  >
-
-  <button onclick="enviar()">
-    Enviar mensagem de teste
-  </button>
-
-  <div id="resultado"></div>
-
-  <script>
-    async function enviar() {
-
-      const telefone =
-        document.getElementById("telefone").value;
-
-      const resultado =
-        document.getElementById("resultado");
-
-      resultado.innerHTML = "Enviando...";
-
-      try {
-
-        const resposta = await fetch("/api/send-test", {
-          method: "POST",
-
-          headers: {
-            "Content-Type": "application/json"
-          },
-
-          body: JSON.stringify({
-            to: telefone
-          })
-        });
-
-        const dados = await resposta.json();
-
-        if (resposta.ok) {
-          resultado.innerHTML =
-            "✅ Mensagem enviada com sucesso.";
-        } else {
-          resultado.innerHTML =
-            "❌ Erro: " + JSON.stringify(dados);
-        }
-
-      } catch (erro) {
-
-        resultado.innerHTML =
-          "❌ Erro de conexão: " + erro.message;
-
-      }
+<h1>Vogt Investimentos</h1>
+<h2>Conexão com WhatsApp</h2>
+<p>Conecte sua conta do WhatsApp Business.</p>
+<button onclick="launchWhatsAppSignup()">
+Conectar WhatsApp
+</button>
+<p id="status">Aguardando conexão.</p>
+<script>
+window.fbAsyncInit = function () {
+  FB.init({
+    appId: "2114791949450421",
+    autoLogAppEvents: true,
+    xfbml: false,
+    version: "v26.0"
+  });
+};
+(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://connect.facebook.net/pt_BR/sdk.js";
+  fjs.parentNode.insertBefore(js, fjs);
+})(document, "script", "facebook-jssdk");
+function launchWhatsAppSignup() {
+  document.getElementById("status").innerText =
+    "Abrindo conexão com a Meta...";
+  FB.login(function(response) {
+    if (response.authResponse && response.authResponse.code) {
+      document.getElementById("status").innerText =
+        "Autorização recebida. Falta concluir a configuração do servidor.";
+    } else {
+      document.getElementById("status").innerText =
+        "Conexão cancelada ou não autorizada.";
     }
-  </script>
-
+  }, {
+    config_id: "1379754020717894",
+    response_type: "code",
+    override_default_response_type: true,
+    extras: {
+      setup: {},
+      featureType: "whatsapp_business_app_onboarding"
+    }
+  });
+}
+</script>
 </body>
 </html>
